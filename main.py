@@ -11,7 +11,7 @@ class Characteristic:
         self.mana = mana
         self.stamina = stamina
         self._hero = hero
-        self.health = 0
+
 
 
 class Armor:
@@ -92,6 +92,8 @@ class Hero:
         self._characteristic = Characteristic(100, 100, self)   #self - для передачи характеристик в Characteristic
         self._weapon = weapon
         self.BASE_HEALTH = 100
+        self.BASE_MANA = 100
+        self.BASE_STAMINA = 100
         self.slots_armor = {
             'Шлем': None,
             'Нагрудник': None,
@@ -100,21 +102,53 @@ class Hero:
         }
         self.amount_strength = 0
         self.health = 0
+        self.amount_intellect = 0
+        self.mana = 0
+        self.amount_agility = 0
+        self.stamina = 0
 
     def equip_armor(self, inventory, key, name_thing):
         """Одевание брони"""
-        if key.title() in inventory.slots_category:
-            item = inventory.slots_category[key][name_thing]
-            self.slots_armor[key] = item
+        if self.slots_armor[key]:
+            print(f'Слот занят.')
 
         else:
-            print(f'Нема такова')
+            if key in inventory.slots_category:
+                item = inventory.slots_category[key][name_thing]
+                self.slots_armor[key] = item
 
+            else:
+                print(f'Нема такова')
 
     def calculation_health(self):
         """Подсчет здоровья"""
+        self.amount_strength = 0
+        for slot, item in self.slots_armor.items():
+            if item:
+                if hasattr(item, 'value_strength') and item.value_strength:
+                    self.amount_strength += item.value_strength
         self.health = self.BASE_HEALTH + self.amount_strength * 10
         self._characteristic.health = self.health
+
+    def calculation_mana(self):
+        """Подсчет маны"""
+        self.amount_intellect = 0
+        for slot, item in self.slots_armor.items():
+            if item:
+                if hasattr(item, 'value_intellect') and item.value_intellect:
+                    self.amount_intellect += item.value_intellect
+        self.mana = self.BASE_MANA + self.amount_intellect * 10
+        self._characteristic.mana = self.mana
+
+    def calculation_stamina(self):
+        """Подсчет выносливости"""
+        self.amount_agility = 0
+        for slot, item in self.slots_armor.items():
+            if item:
+                if hasattr(item, 'value_agility') and item.value_agility:
+                    self.amount_agility += item.value_agility
+        self.stamina = self.BASE_STAMINA + self. amount_agility * 10
+        self._characteristic.stamina = self.stamina
 
     def attack(self):
         """Нанести атаку оружием"""
@@ -125,7 +159,8 @@ class Hero:
 
     def info_characteristic(self):
         """Показать характеристики героя"""
-        print(f"У героя {self._characteristic.health} здоровья, {self._characteristic.mana} маны, {self._characteristic.stamina} выносливости.")
+        pass
+        #print(f"У героя {self._characteristic.health} здоровья, {self._characteristic.mana} маны, {self._characteristic.stamina} выносливости.")
 
 
 weapon_1 = Weapon('Фростморн', 50, 'Меч')
@@ -149,6 +184,9 @@ hero.equip_armor(inventory_hero, 'Поножи', 'Шипастые латные 
 hero.equip_armor(inventory_hero, 'Ботинки', 'Латные ботинки короля мертвых')
 
 hero.calculation_health()
-
-print(hero.slots_armor)
+print(hero.health)
+hero.calculation_mana()
+print(hero.mana)
+hero.calculation_stamina()
+print(hero.stamina)
 hero.info_characteristic()
