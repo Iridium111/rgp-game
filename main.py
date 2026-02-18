@@ -1,10 +1,4 @@
 
-class Weapon:
-    def __init__(self, name, damage, category):
-        self.name = name
-        self.damage = damage
-        self.category = category
-
 
 class Characteristic:
     def __init__(self, mana, stamina, hero):    #hero - принимает характеристики от своего объекта
@@ -13,12 +7,22 @@ class Characteristic:
         self._hero = hero
 
 
-
-class Armor:
-    def __init__(self, name, category, strength=None, value_strength=None, agility=None, value_agility=None,
-                 intellect=None, value_intellect=None):
+class Item:
+    def __init__(self, name, category):
         self.name = name
         self.category = category
+
+
+class Weapon(Item):
+    def __init__(self, name, damage, category):
+        super().__init__(name, category)
+        self.damage = damage
+
+
+class Armor(Item):
+    def __init__(self, name, category, strength=None, value_strength=None, agility=None, value_agility=None,
+                 intellect=None, value_intellect=None):
+        super().__init__(name, category)
         self.strength = strength
         self.agility = agility
         self.intellect = intellect
@@ -116,6 +120,16 @@ class Hero:
             if key in inventory.slots_category:
                 item = inventory.slots_category[key][name_thing]
                 self.slots_armor[key] = item
+                inventory.slots_category[key].pop(name_thing)
+
+                if not inventory.slots_category[key]:
+                    inventory.slots_category.pop(key)
+                inventory.slots_items.pop(name_thing)
+
+                # Пересчитываем характеристики текущего героя (self)
+                self.calculation_health()
+                self.calculation_mana()
+                self.calculation_stamina()
 
             else:
                 print(f'Нема такова')
@@ -145,7 +159,7 @@ class Hero:
         self.amount_agility = 0
         for slot, item in self.slots_armor.items():
             if item:
-                if hasattr(item, 'value_agility') and item.value_agility:
+                if hasattr(item, 'value_agility') and item.value_agility:   #hasattr - поиск значения по названию в словаре
                     self.amount_agility += item.value_agility
         self.stamina = self.BASE_STAMINA + self. amount_agility * 10
         self._characteristic.stamina = self.stamina
@@ -178,15 +192,15 @@ inventory_hero.add_in_inventory(boots)
 hero = Hero('Артас', weapon_1)
 hero.attack()
 
+
 hero.equip_armor(inventory_hero, 'Шлем', 'Шлем Господства')
 hero.equip_armor(inventory_hero, 'Нагрудник', 'Шипастый латный нагрудник')
 hero.equip_armor(inventory_hero, 'Поножи', 'Шипастые латные поножи')
 hero.equip_armor(inventory_hero, 'Ботинки', 'Латные ботинки короля мертвых')
 
+print(inventory_hero.slots_category)
+
 hero.calculation_health()
 print(hero.health)
-hero.calculation_mana()
 print(hero.mana)
-hero.calculation_stamina()
 print(hero.stamina)
-hero.info_characteristic()
