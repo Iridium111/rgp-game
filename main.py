@@ -6,6 +6,7 @@ class Characteristic:
         self.BASE_HEALTH = 100
         self.BASE_MANA = 100
         self.BASE_STAMINA = 100
+        self.STAT_MULTIPLIER = 10
         self.amount_strength = 0
         self.health = 0
         self.amount_intellect = 0
@@ -20,7 +21,7 @@ class Characteristic:
             if item:
                 if hasattr(item, 'value_strength') and item.value_strength:
                     self.amount_strength += item.value_strength
-        self.health = self.BASE_HEALTH + self.amount_strength * 10
+        self.health = self.BASE_HEALTH + self.amount_strength * self.STAT_MULTIPLIER
 
     def calculation_mana(self):
         """Подсчет маны"""
@@ -29,7 +30,7 @@ class Characteristic:
             if item:
                 if hasattr(item, 'value_intellect') and item.value_intellect:
                     self.amount_intellect += item.value_intellect
-        self.mana = self.BASE_MANA + self.amount_intellect * 10
+        self.mana = self.BASE_MANA + self.amount_intellect * self.STAT_MULTIPLIER
 
     def calculation_stamina(self):
         """Подсчет выносливости"""
@@ -38,7 +39,7 @@ class Characteristic:
             if item:
                 if hasattr(item, 'value_agility') and item.value_agility:   #hasattr - поиск значения по названию в словаре
                     self.amount_agility += item.value_agility
-        self.stamina = self.BASE_STAMINA + self. amount_agility * 10
+        self.stamina = self.BASE_STAMINA + self. amount_agility * self.STAT_MULTIPLIER
 
 
 class Item:
@@ -140,6 +141,24 @@ class Inventory:
         self.slots_category[item.category][item.name] = item    # кладем предмет в свою категорию
 
 
+class Enemy:
+    def __init__(self, name):
+        self.name = name
+
+    def info_enemy(self):
+        return f'Информация о враге.'
+
+
+class Skeleton(Enemy):
+    def __init__(self, name, health):
+        super().__init__(name)
+        self.health = health
+
+    def info_enemy(self):
+        """Вывод информации о враге."""
+        return f'{self.name}\nЗдоровье:{self.health}'
+
+
 class Hero:
     def __init__(self, name):
         self._name = name
@@ -153,27 +172,45 @@ class Hero:
         }
 
     def equip_armor(self, inventory, key, name_thing):
-        """Одевание брони"""
-        if self.slots_equipment[key]:
-            print(f'Слот занят.')
-
-        else:
-            if key in inventory.slots_category:
-                item = inventory.slots_category[key][name_thing]
-                self.slots_equipment[key] = item
-                inventory.slots_category[key].pop(name_thing)
-
-                if not inventory.slots_category[key]:
-                    inventory.slots_category.pop(key)
-                inventory.slots_items.pop(name_thing)
-
-                # Пересчитываем характеристики текущего героя (self)
-                self._characteristic.calculation_health()
-                self._characteristic.calculation_mana()
-                self._characteristic.calculation_stamina()
+        """Надеть броню"""
+        if key in self.slots_equipment:
+            if self.slots_equipment[key]:
+                print(f'Слот занят.')
 
             else:
-                print(f'Нема такова')
+                if key in inventory.slots_category:
+                    item = inventory.slots_category[key][name_thing]
+                    self.slots_equipment[key] = item
+                    inventory.slots_category[key].pop(name_thing)
+
+                    if not inventory.slots_category[key]:
+                        inventory.slots_category.pop(key)
+                    inventory.slots_items.pop(name_thing)
+
+                    # Пересчитываем характеристики текущего героя (self)
+                    self._characteristic.calculation_health()
+                    self._characteristic.calculation_mana()
+                    self._characteristic.calculation_stamina()
+
+                else:
+                    print(f'Нема такова\n')
+        else:
+            print('Нет такого слота.\n')
+
+    def unequip_armor(self, name, inventory):
+        """Снять броню"""
+        if name in self.slots_equipment:
+            item = self.slots_equipment[name]
+            if item:
+                inventory.add_in_inventory(item)
+                self.slots_equipment[name] = None
+                self._characteristic.calculation_mana()
+                self._characteristic.calculation_health()
+                self._characteristic.calculation_stamina()
+                print(f'Снят: {item}')
+
+        else:
+            print(f'Нет такого слота.\n')
 
     def attack(self):
         """Нанести атаку оружием"""
@@ -186,7 +223,7 @@ class Hero:
             print(item)
 
         print(f'Показатели здоровья, маны, выносливости:\nЗдоровье: {self._characteristic.health}\n'
-              f'Мана: {self._characteristic.mana}\nВыносливость: {self._characteristic.stamina}')
+              f'Мана: {self._characteristic.mana}\nВыносливость: {self._characteristic.stamina}\n')
 
 
 crown = Helmet('Шлем Господства', 'Шлем', 'Сила', 5, 'Ловкость', 7,  'Интеллект', 3)
@@ -203,6 +240,7 @@ inventory_hero.add_in_inventory(greaves)
 inventory_hero.add_in_inventory(boots)
 inventory_hero.add_in_inventory(weapon)
 
+enemy = Skeleton('Скелет', 100)
 hero = Hero('Артас')
 hero.attack()
 
@@ -216,3 +254,7 @@ hero.equip_armor(inventory_hero, 'Оружие', 'Ледянная скорбь'
 print(inventory_hero.slots_category)
 
 hero.info_characteristic()
+
+hero.unequip_armor('Шлем', inventory_hero)
+
+print(enemy.info_enemy())
