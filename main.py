@@ -145,18 +145,56 @@ class Enemy:
     def __init__(self, name):
         self.name = name
 
-    def info_enemy(self):
-        return f'Информация о враге.'
+    # def info_enemy(self):
+    #     return f'Информация о враге.'
+
+    def attack(self):
+        pass
+
+    def __str__(self):
+        return f'Информация о {self.name}'
 
 
 class Skeleton(Enemy):
-    def __init__(self, name, health):
+    def __init__(self, name, health, damage):
         super().__init__(name)
         self.health = health
+        self.damage = damage
 
-    def info_enemy(self):
-        """Вывод информации о враге."""
-        return f'{self.name}\nЗдоровье:{self.health}'
+    # def info_enemy(self):
+    #     """Вывод информации о враге."""
+    #     return f'{self.name}\nЗдоровье:{self.health}\nУрон:{self.damage}'
+
+    def __str__(self):
+        return f'{self.name}\nЗдоровье:{self.health}\nУрон:{self.damage}'
+
+class Level:
+    def __init__(self, lvl, experience=0, experience_storage=0):
+        self.lvl = lvl
+        self.experience = experience
+        self.experience_storage = experience_storage
+
+    def info_lvl(self):
+        return 'Показывает уровень героя/врага'
+
+
+class HeroLevel(Level):
+    def __init__(self, lvl, hero, experience, experience_storage):
+        super().__init__(lvl, experience, experience_storage)
+        self.hero = hero
+
+    def info_lvl(self):
+        return (f'{self.hero}\nУровень:{self.lvl}\nОпыта до следующего уровня:{self.experience_storage}\n'
+                f'Опыт:{self.experience}')
+
+
+class EnemyLevel(Level):
+    def __init__(self, lvl, enemy):
+        super().__init__(lvl)
+        self.enemy = enemy
+
+    def info_lvl(self):
+        return f'Враг:{self.enemy.name}\nУровень:{self.lvl}'
 
 
 class Hero:
@@ -240,7 +278,7 @@ inventory_hero.add_in_inventory(greaves)
 inventory_hero.add_in_inventory(boots)
 inventory_hero.add_in_inventory(weapon)
 
-enemy = Skeleton('Скелет', 100)
+enemy = Skeleton('Скелет', 100, 20)
 hero = Hero('Артас')
 hero.attack()
 
@@ -257,4 +295,7 @@ hero.info_characteristic()
 
 hero.unequip_armor('Шлем', inventory_hero)
 
-print(enemy.info_enemy())
+# print(enemy.info_enemy())
+
+lvlenemy = EnemyLevel(10, enemy)
+print(lvlenemy.info_lvl())
