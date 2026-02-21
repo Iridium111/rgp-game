@@ -145,9 +145,6 @@ class Enemy:
     def __init__(self, name):
         self.name = name
 
-    # def info_enemy(self):
-    #     return f'Информация о враге.'
-
     def attack(self):
         pass
 
@@ -168,24 +165,60 @@ class Skeleton(Enemy):
     def __str__(self):
         return f'{self.name}\nЗдоровье:{self.health}\nУрон:{self.damage}'
 
+
 class Level:
-    def __init__(self, lvl, experience=0, experience_storage=0):
-        self.lvl = lvl
+    def __init__(self, lvl=1, experience_gained=0, experience=0, remaining_experience=0, base_experience=100):
+        self._lvl = lvl
+        self.experience_gained = experience_gained
         self.experience = experience
-        self.experience_storage = experience_storage
+        self.remaining_experience = remaining_experience
+        self.base_experience = base_experience
+        self.exp_to_next_level = 0
 
     def info_lvl(self):
         return 'Показывает уровень героя/врага'
 
 
 class HeroLevel(Level):
-    def __init__(self, lvl, hero, experience, experience_storage):
-        super().__init__(lvl, experience, experience_storage)
+    def __init__(self, hero, lvl=1, experience=0, remaining_experience=0, experience_gained=0, base_experience=100):
+        super().__init__(lvl, experience, remaining_experience, experience_gained, base_experience)
         self.hero = hero
 
     def info_lvl(self):
-        return (f'{self.hero}\nУровень:{self.lvl}\nОпыта до следующего уровня:{self.experience_storage}\n'
-                f'Опыт:{self.experience}')
+        return (f'{self.hero}\nУровень:{self._lvl}\nОпыт:{self.base_experience}\n'
+                f'Опыта до следующего уровня:{self.exp_to_next_level}\n')
+
+    # remaining_experience - оставшейся опыт
+    # experience_gained -полученный опыт
+    # base_experience = Базовый опыт
+    # experience = опыт
+
+    def up_lvl(self):
+        """Добавление опыта, обновление уровня"""
+        while True:
+            # Проверка, есть ли оставшейся опыт
+            if self.base_experience > 0:
+                self.base_experience -= self.remaining_experience
+
+            if self.base_experience > 0 and self.base_experience >= self.experience_gained:
+                self.remaining_experience = self.remaining_experience - self.experience_gained
+                self._lvl += 1
+                break
+
+            # Если базовый опыт < полученный опыт
+            elif self.base_experience < self.experience_gained:
+                self.experience_gained -= self.base_experience
+                print(f'остаток: {self.experience_gained}')
+                self._lvl += 1
+                # Увеличение опыта для следующего уровня
+                self.base_experience *= 1.5
+                print(f"Начало: exp={self.experience_gained}, base={self.base_experience} lvl={self._lvl}")
+
+            else:
+                print('Не катит')
+        # Остаток переноситься в переменную остатка
+        self.remaining_experience = self.experience_gained
+        self.exp_to_next_level = self.base_experience - self.remaining_experience
 
 
 class EnemyLevel(Level):
@@ -194,7 +227,7 @@ class EnemyLevel(Level):
         self.enemy = enemy
 
     def info_lvl(self):
-        return f'Враг:{self.enemy.name}\nУровень:{self.lvl}'
+        return f'Враг:{self.enemy.name}\nУровень:{self._lvl}'
 
 
 class Hero:
@@ -208,6 +241,7 @@ class Hero:
             'Поножи': None,
             'Ботинки': None,
         }
+        self.lvl = HeroLevel(self)
 
     def equip_armor(self, inventory, key, name_thing):
         """Надеть броню"""
@@ -260,6 +294,8 @@ class Hero:
         for key, item in self.slots_equipment.items():
             print(item)
 
+        print(f'Информация об уровне:\n{self.lvl.info_lvl()}')
+
         print(f'Показатели здоровья, маны, выносливости:\nЗдоровье: {self._characteristic.health}\n'
               f'Мана: {self._characteristic.mana}\nВыносливость: {self._characteristic.stamina}\n')
 
@@ -291,11 +327,15 @@ hero.equip_armor(inventory_hero, 'Оружие', 'Ледянная скорбь'
 
 print(inventory_hero.slots_category)
 
-hero.info_characteristic()
-
 hero.unequip_armor('Шлем', inventory_hero)
-
-# print(enemy.info_enemy())
 
 lvlenemy = EnemyLevel(10, enemy)
 print(lvlenemy.info_lvl())
+
+hero.info_characteristic()
+
+hero.lvl.experience_gained = 1000
+hero.lvl.up_lvl()
+print(hero.lvl.info_lvl())
+
+
