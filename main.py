@@ -167,12 +167,12 @@ class Skeleton(Enemy):
 
 
 class Level:
-    def __init__(self, lvl=1, experience_gained=0, experience=0, remaining_experience=0, base_experience=100):
+    def __init__(self, lvl=1, exp_gained=0, experience=0, current_exp=0, exp_needed=100):
         self._lvl = lvl
-        self.experience_gained = experience_gained
+        self.exp_gained = exp_gained
         self.experience = experience
-        self.remaining_experience = remaining_experience
-        self.base_experience = base_experience
+        self.current_exp = current_exp
+        self.exp_needed = exp_needed
         self.exp_to_next_level = 0
 
     def info_lvl(self):
@@ -180,45 +180,22 @@ class Level:
 
 
 class HeroLevel(Level):
-    def __init__(self, hero, lvl=1, experience=0, remaining_experience=0, experience_gained=0, base_experience=100):
-        super().__init__(lvl, experience, remaining_experience, experience_gained, base_experience)
+    def __init__(self, hero, lvl=1, experience=0, current_exp=0, exp_gained=0, exp_needed=100):
+        super().__init__(lvl, experience, current_exp, exp_gained, exp_needed)
         self.hero = hero
 
     def info_lvl(self):
-        return (f'{self.hero}\nУровень:{self._lvl}\nОпыт:{self.base_experience}\n'
-                f'Опыта до следующего уровня:{self.exp_to_next_level}\n')
-
-    # remaining_experience - оставшейся опыт
-    # experience_gained -полученный опыт
-    # base_experience = Базовый опыт
-    # experience = опыт
+        return (f'Уровень:{self._lvl}\n'
+                f'Опыт: {self.current_exp}/{self.exp_needed}')
 
     def up_lvl(self):
         """Добавление опыта, обновление уровня"""
-        while True:
-            # Проверка, есть ли оставшейся опыт
-            if self.base_experience > 0:
-                self.base_experience -= self.remaining_experience
-
-            if self.base_experience > 0 and self.base_experience >= self.experience_gained:
-                self.remaining_experience = self.remaining_experience - self.experience_gained
-                self._lvl += 1
-                break
-
-            # Если базовый опыт < полученный опыт
-            elif self.base_experience < self.experience_gained:
-                self.experience_gained -= self.base_experience
-                print(f'остаток: {self.experience_gained}')
-                self._lvl += 1
-                # Увеличение опыта для следующего уровня
-                self.base_experience *= 1.5
-                print(f"Начало: exp={self.experience_gained}, base={self.base_experience} lvl={self._lvl}")
-
-            else:
-                print('Не катит')
-        # Остаток переноситься в переменную остатка
-        self.remaining_experience = self.experience_gained
-        self.exp_to_next_level = self.base_experience - self.remaining_experience
+        self.current_exp += self.exp_gained
+        # Проверка условия: работает если опыта больше, чем нужно для уровня. Остаток храниться
+        while self.current_exp >= self.exp_needed:
+            self.current_exp = int(self.current_exp - self.exp_needed)
+            self._lvl += 1
+            self.exp_needed = int(self.exp_needed * 1.5)
 
 
 class EnemyLevel(Level):
@@ -294,7 +271,7 @@ class Hero:
         for key, item in self.slots_equipment.items():
             print(item)
 
-        print(f'Информация об уровне:\n{self.lvl.info_lvl()}')
+        print(f'Информация об уровне:\n{self.lvl.info_lvl()}\n')
 
         print(f'Показатели здоровья, маны, выносливости:\nЗдоровье: {self._characteristic.health}\n'
               f'Мана: {self._characteristic.mana}\nВыносливость: {self._characteristic.stamina}\n')
@@ -332,10 +309,7 @@ hero.unequip_armor('Шлем', inventory_hero)
 lvlenemy = EnemyLevel(10, enemy)
 print(lvlenemy.info_lvl())
 
-hero.info_characteristic()
-
-hero.lvl.experience_gained = 1000
+hero.lvl.exp_gained = 1000
 hero.lvl.up_lvl()
-print(hero.lvl.info_lvl())
 
-
+hero.info_characteristic()
