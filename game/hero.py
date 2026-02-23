@@ -1,6 +1,8 @@
 
-from characters import Characteristic
-import level
+from .characters import Characteristic
+from .level import HeroLevel
+from .inventory import Inventory
+
 
 class Hero:
     def __init__(self, name):
@@ -13,7 +15,7 @@ class Hero:
             'Поножи': None,
             'Ботинки': None,
         }
-        self.lvl = level.HeroLevel(self)
+        self.lvl = HeroLevel(self)
 
     def equip_armor(self, inventory, key, name_thing):
         """Надеть броню"""
