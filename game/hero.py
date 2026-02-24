@@ -5,6 +5,8 @@ from .inventory import Inventory
 
 
 class Hero:
+    """Главный герой игры."""
+
     def __init__(self, name):
         self._name = name
         self.characteristic = Characteristic(self)
@@ -17,42 +19,44 @@ class Hero:
         }
         self.lvl = HeroLevel(self)
 
-    def equip_armor(self, inventory, key, name_thing):
+    def equip_armor(self, inventory, name_thing):
         """Надеть броню"""
-        try:
-            if key not in self.slots_equipment:
-                print('Нет такого слота.')
-                return
-
-            if self.slots_equipment[key]:
-                print('Слот занят.')
-                return
-
-            # Пытаемся получить предмет
-            item = inventory.slots_category[key][name_thing]
-            self.slots_equipment[key] = item
-
-            # Удаляем из инвентаря
-            inventory.slots_category[key].pop(name_thing)
-            if not inventory.slots_category[key]:
-                inventory.slots_category.pop(key)
-            inventory.slots_items.pop(name_thing)
-
-            # Пересчитываем характеристики текущего героя (self)
-            self.characteristic.attributes_all()
-
-        except KeyError:
-            print(f'Предмет {name_thing} или категория {key} не найдены в инвентаре')
+        # Получаем предмет из инвентаря
+        item = inventory.slots_items.get(name_thing)
+        if not item:
+            print(f'Предмет {name_thing} не найден.')
             return
 
-    def unequip_armor(self, name, inventory):
+        # Проверяем слот
+        if item.slot not in self.slots_equipment:
+            print(f'Нет такого слота {item.slot}')
+            return
+
+        # Проверяем, свободен ли слот
+        if self.slots_equipment[item.slot]:
+            print(f'Слот {item.slot} занят.')
+            return
+
+        # Надеваем
+        self.slots_equipment[item.slot] = item
+
+        # Удаление из инвентаря
+        inventory.slots_category[item.slot].pop(name_thing)
+        if not inventory.slots_category[item.slot]:
+            inventory.slots_category.pop(item.slot)
+        inventory.slots_items.pop(name_thing)
+
+        # Обновление характеристик
+        self.characteristic.attributes_all()
+
+    def unequip_armor(self, slot_name, inventory):
         """Снять броню"""
-        thing = self.slots_equipment[name]
+        thing = self.slots_equipment[slot_name]
 
         # Проверка наличия предмета в слоту и снятие.
         if thing:
             inventory.add_in_inventory(thing)
-            self.slots_equipment[name] = None
+            self.slots_equipment[slot_name] = None
 
             # Пересчитываем характеристики текущего героя (self)
             self.characteristic.attributes_all()

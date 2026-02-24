@@ -7,9 +7,9 @@ class Characteristic:
         self.BASE_STAMINA = 100
         self.STAT_MULTIPLIER = 10
         self.attributes = {
-            'strength': 0,
-            'agility': 0,
-            'intellect': 0,
+            'Сила': 0,
+            'Ловкость': 0,
+            'Интеллект': 0,
             }
         self.stats = {
             'health': 0,
@@ -25,16 +25,16 @@ class Characteristic:
         for item in self._hero.slots_equipment.values():
             # Добавление атрибутов
             if item:
-                if hasattr(item, 'value_strength') and item.value_strength:
-                    self.attributes['strength'] += item.value_strength
+                strength = item.stats.get('Сила', 0)
+                self.attributes['Сила'] += strength
 
-                if hasattr(item, 'value_intellect') and item.value_intellect:
-                    self.attributes['intellect'] += item.value_intellect
+                intellect = item.stats.get('Интеллект', 0)
+                self.attributes['Интеллект'] += intellect
 
-                if hasattr(item, 'value_agility') and item.value_agility:
-                    self.attributes['agility'] += item.value_agility
+                agility = item.stats.get('Ловкость', 0)
+                self.attributes['Ловкость'] += agility
 
         # Увеличение характеристик в зависимости от количества атрибутов + базового значения + множителя
-        self.stats['health'] = self.BASE_HEALTH + self.attributes['strength'] * self.STAT_MULTIPLIER
-        self.stats['mana'] = self.BASE_MANA + self.attributes['intellect'] * self.STAT_MULTIPLIER
-        self.stats['stamina'] = self.BASE_STAMINA + self.attributes['agility'] * self.STAT_MULTIPLIER
+        self.stats['health'] = self.BASE_HEALTH + self.attributes['Сила'] * self.STAT_MULTIPLIER
+        self.stats['mana'] = self.BASE_MANA + self.attributes['Интеллект'] * self.STAT_MULTIPLIER
+        self.stats['stamina'] = self.BASE_STAMINA + self.attributes['Ловкость'] * self.STAT_MULTIPLIER
