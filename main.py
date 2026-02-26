@@ -4,6 +4,7 @@ from game.inventory import Inventory
 from game.enemy import Skeleton
 from game.level import EnemyLevel
 from game.hero import Hero
+from game.battle import Battle
 
 
 def main():
@@ -39,6 +40,10 @@ def main():
         )
 
     hero = Hero('Артас')
+    enemy = Skeleton('Скелет', 440, 50, 100)
+
+    battle = Battle()
+
 
     inventory_hero = Inventory()
     inventory_hero.add_in_inventory(crown)
@@ -47,7 +52,7 @@ def main():
     inventory_hero.add_in_inventory(boots)
     inventory_hero.add_in_inventory(weapon)
 
-    enemy = Skeleton('Скелет', 100, 20)
+
     hero.attack()
     #
     hero.equip_armor(inventory_hero, 'Шлем Господства')
@@ -65,6 +70,10 @@ def main():
     hero.characteristic.attributes_all()
 
     hero.info_characteristic()
+
+    battle.start_battle(hero, enemy)
+
+
 
 
 if __name__ == "__main__":
