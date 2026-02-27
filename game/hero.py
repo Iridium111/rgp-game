@@ -65,9 +65,16 @@ class Hero:
         elif not thing:
             print('Нет вещи в этом слоту')
 
-    def attack(self):
+    def take_damage(self, damage):
+        """Получение урона"""
+        self.characteristic.stats['health'] -= damage
+        if self.characteristic.stats['health'] <= 0:
+            self.characteristic.stats['health'] = 0
+
+    def attack(self, target):
         """Нанести атаку оружием"""
-        pass
+        damage = self.characteristic.damage
+        target.take_damage(damage)
 
     def info_characteristic(self):
         """Показать характеристики героя"""

@@ -13,22 +13,22 @@ class Battle:
 
         while hero.characteristic.stats['health'] > 0 and enemy.health > 0:
 
-            print(f"Здоровье:\n{hero.characteristic.stats['health']}:{enemy.health} ")
-            print(f'Герой наносит удар с уроном  {hero.characteristic.damage}')
-            enemy.health = enemy.health - hero.characteristic.damage
+            print(f"Здоровье:\n{hero.characteristic.stats['health']}:{enemy.health}\n")
 
+            hero.attack(enemy)
+            print(f'Герой наносит удар с уроном  {hero.characteristic.damage}')
             if enemy.health <= 0:
-                enemy.health = 0
-                print(f'{hero._name} - победил!')
+                print(f'{enemy.name} повержен!')
                 break
 
             print(f'{enemy.name} наносит удар с уроном {enemy.damage}\n')
-            hero.characteristic.stats['health'] -= enemy.damage
-
+            enemy.attack(hero)
             if hero.characteristic.stats['health'] <= 0:
-                hero.characteristic.stats['health'] = 0
-                print('GAME OVER.')
+                print('GAME OVER!')
                 break
+
+
+
 
 
 
