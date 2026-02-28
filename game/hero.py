@@ -2,6 +2,7 @@
 from .characters import Characteristic
 from .level import HeroLevel
 from .inventory import Inventory
+from random import randint
 
 
 class Hero:
@@ -73,8 +74,14 @@ class Hero:
 
     def attack(self, target):
         """Нанести атаку оружием"""
-        damage = self.characteristic.damage
+        # Минимальное здоровье
+        min_damage = int(self.characteristic.damage * 0.75)
+        # Максимальное здоровье
+        max_damage = int(self.characteristic.damage * 1.25)
+
+        damage = randint(min_damage, max_damage)
         target.take_damage(damage)
+        print(f'{self._name} наносит удар с уроном  {damage}')
 
     def info_characteristic(self):
         """Показать характеристики героя"""

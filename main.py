@@ -40,8 +40,10 @@ def main():
         )
 
     hero = Hero('Артас')
-    enemy = Enemy('Скелет', 440, 100, 100)
+    enemy = Enemy('Скелет', 50, 100)
     battle = Battle()
+
+
 
 
     inventory_hero = Inventory()
@@ -68,6 +70,7 @@ def main():
     hero.info_characteristic()
 
     battle.start_battle(hero, enemy)
+
 
 if __name__ == "__main__":
     main()
