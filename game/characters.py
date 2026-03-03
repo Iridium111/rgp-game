@@ -16,13 +16,12 @@ class Characteristic:
             'mana': 0,
             'stamina': 0,
             }
-        self.damage = 0
+        self.damage = 1
 
     def attributes_all(self):
         """Подсчет всех характеристик"""
         for item in self.attributes:
             self.attributes[item] = 0
-            self.damage = 1
 
         for item in self._hero.slots_equipment.values():
             # Добавление атрибутов
@@ -38,11 +37,18 @@ class Characteristic:
 
             try:
                 if item.damage:
-                    self.damage += item.damage - self.damage
+                    self.damage += item.damage
             except AttributeError:
                 pass
 
-        # Увеличение характеристик в зависимости от количества атрибутов + базового значения + множителя
+        # Увеличение характеристик в зависимости от количества атрибутов + базового значения + множителя.
         self.stats['health'] = self.BASE_HEALTH + self.attributes['Сила'] * self.STAT_MULTIPLIER
+        # Обновление текущего здоровья в зависимости от максимального здоровья.
+        if self._hero.current_health == 0:
+            self._hero.current_health = self.stats['health']
+        else:
+        # Обновления здоровья если снимается или надевается броня и меняется макс. здоровье.
+            self._hero.current_health = self.stats['health']
+
         self.stats['mana'] = self.BASE_MANA + self.attributes['Интеллект'] * self.STAT_MULTIPLIER
         self.stats['stamina'] = self.BASE_STAMINA + self.attributes['Ловкость'] * self.STAT_MULTIPLIER

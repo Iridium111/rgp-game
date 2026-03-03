@@ -40,11 +40,8 @@ def main():
         )
 
     hero = Hero('Артас')
-    enemy = Enemy('Скелет', 50, 100)
+    enemy = Enemy('Скелет', 30, 50)
     battle = Battle()
-
-
-
 
     inventory_hero = Inventory()
     inventory_hero.add_in_inventory(crown)
@@ -59,15 +56,15 @@ def main():
     hero.equip_armor(inventory_hero, 'Латные ботинки короля мертвых')
     hero.equip_armor(inventory_hero, 'Ледянная скорбь')
 
-    lvlenemy = EnemyLevel(10, enemy)
-    print(lvlenemy.info_lvl())
+    # hero.characteristic.attributes_all()
 
-    hero.lvl.exp_gained = 1500
-    hero.lvl.up_lvl()
+    battle.start_battle(hero, enemy)
 
-    hero.characteristic.attributes_all()
-
+    hero.unequip_armor('Шлем', inventory_hero)
     hero.info_characteristic()
+    # print(hero.current_health)
+    # hero.equip_armor(inventory_hero, 'Шлем Господства')
+    # print(hero.current_health)
 
     battle.start_battle(hero, enemy)
 

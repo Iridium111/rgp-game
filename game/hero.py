@@ -19,6 +19,11 @@ class Hero:
             'Ботинки': None,
         }
         self.lvl = HeroLevel(self)
+        self.current_health = 0
+
+    # def create_current_health(self):
+    #     """Создание здоровья при первом появлении героя."""
+    #     self.current_health = self.characteristic.stats['health']       # Скорее всего пробле ма тут
 
     def equip_armor(self, inventory, name_thing):
         """Надеть броню"""
@@ -54,7 +59,7 @@ class Hero:
         """Снять броню"""
         thing = self.slots_equipment[slot_name]
 
-        # Проверка наличия предмета в слоту и снятие.
+        # Проверка наличия предмета в слоте и снятие.
         if thing:
             inventory.add_in_inventory(thing)
             self.slots_equipment[slot_name] = None
@@ -68,9 +73,9 @@ class Hero:
 
     def take_damage(self, damage):
         """Получение урона"""
-        self.characteristic.stats['health'] -= damage
-        if self.characteristic.stats['health'] <= 0:
-            self.characteristic.stats['health'] = 0
+        self.current_health -= damage
+        if self.current_health <= 0:
+            self.current_health = 0
 
     def attack(self, target):
         """Нанести атаку оружием"""
@@ -91,5 +96,5 @@ class Hero:
 
         print(f'Информация об уровне:\n{self.lvl.info_lvl()}\n')
 
-        print(f"Показатели здоровья, маны, выносливости:\nЗдоровье: {self.characteristic.stats['health']} \n"
+        print(f"Показатели здоровья, маны, выносливости:\nЗдоровье: {self.current_health}:{self.characteristic.stats['health']} \n"
               f"Мана: {self.characteristic.stats['mana']} \nВыносливость: {self.characteristic.stats['stamina']}\n")
