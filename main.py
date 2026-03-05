@@ -5,6 +5,7 @@ from game.level import EnemyLevel
 from game.hero import Hero
 from game.battle import Battle
 from game.enemy import Enemy
+from core import game_loop
 
 
 def main():
@@ -25,7 +26,6 @@ def main():
         slot='Поножи',
         stats={'Сила': 7, 'Ловкость': 10, 'Интеллект': 4}
         )
-
     boots = Armor(
         name='Латные ботинки короля мертвых',
         slot='Ботинки',
@@ -50,23 +50,7 @@ def main():
     inventory_hero.add_in_inventory(boots)
     inventory_hero.add_in_inventory(weapon)
 
-    hero.equip_armor(inventory_hero, 'Шлем Господства')
-    hero.equip_armor(inventory_hero, 'Шипастый латный нагрудник')
-    hero.equip_armor(inventory_hero, 'Шипастые латные поножи')
-    hero.equip_armor(inventory_hero, 'Латные ботинки короля мертвых')
-    hero.equip_armor(inventory_hero, 'Ледянная скорбь')
-
-    # hero.characteristic.attributes_all()
-
-    battle.start_battle(hero, enemy)
-
-    hero.unequip_armor('Шлем', inventory_hero)
-    hero.info_characteristic()
-    # print(hero.current_health)
-    # hero.equip_armor(inventory_hero, 'Шлем Господства')
-    # print(hero.current_health)
-
-    battle.start_battle(hero, enemy)
+    game_loop(hero, enemy, battle, inventory_hero)
 
 
 if __name__ == "__main__":

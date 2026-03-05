@@ -12,9 +12,9 @@ class Characteristic:
             'Интеллект': 0,
             }
         self.stats = {
-            'health': 0,
-            'mana': 0,
-            'stamina': 0,
+            'health': 100,
+            'mana': 100,
+            'stamina': 100,
             }
         self.damage = 1
 

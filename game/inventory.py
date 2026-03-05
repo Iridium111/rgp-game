@@ -13,3 +13,8 @@ class Inventory:
         if item.slot not in self.slots_category:
             self.slots_category[item.slot] = {}  # создаем словарь для этой категории
         self.slots_category[item.slot][item.name] = item   # кладем предмет в свою категорию
+
+    def show_inventory(self):
+        """Показать содержимое инвентаря"""
+        for key, value in self.slots_category.items():
+            print(f'{key}: {value}')

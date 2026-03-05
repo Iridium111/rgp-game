@@ -21,10 +21,6 @@ class Hero:
         self.lvl = HeroLevel(self)
         self.current_health = 0
 
-    # def create_current_health(self):
-    #     """Создание здоровья при первом появлении героя."""
-    #     self.current_health = self.characteristic.stats['health']       # Скорее всего пробле ма тут
-
     def equip_armor(self, inventory, name_thing):
         """Надеть броню"""
         # Получаем предмет из инвентаря
@@ -45,6 +41,7 @@ class Hero:
 
         # Надеваем
         self.slots_equipment[item.slot] = item
+        print('Предмет надет.')
 
         # Удаление из инвентаря
         inventory.slots_category[item.slot].pop(name_thing)

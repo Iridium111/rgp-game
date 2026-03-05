@@ -1,5 +1,4 @@
 
-
 class Level:
     def __init__(self, lvl=1, current_exp=0, exp_needed=100):
         self.lvl = lvl
